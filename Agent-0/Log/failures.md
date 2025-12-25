@@ -9,7 +9,7 @@ Log kegagalan tool/command untuk pembelajaran Agent.
 | Tool          | Total Failures | Last Failure |
 | ------------- | -------------- | ------------ |
 | run_command   | 1              | 2025-12-25   |
-| write_to_file | 4              | 2025-12-25   |
+| write_to_file | 8              | 2025-12-25   |
 
 ---
 
@@ -65,6 +65,46 @@ Log kegagalan tool/command untuk pembelajaran Agent.
 
 ---
 
+### F-006 | write_to_file | 2025-12-25
+
+- **Command/Params:** src/ui/symbols.ts - symbols object
+- **Error:** `An object literal cannot have multiple properties with the same name.`
+- **Context:** Membuat object `symbols` dengan property `cross` (emoji ✖) dan `cross` (box drawing ┼)
+- **Workaround:** Gunakan nama unik untuk setiap property. Rename `cross` (box) menjadi `crossBox`
+- **Pattern ID:** P-003
+
+---
+
+### F-007 | write_to_file | 2025-12-25
+
+- **Command/Params:** src/commands/helpers/check-tools.ts - ToolCheckResult interface
+- **Error:** `Type '{ ok: boolean; version: string | undefined; }' is not assignable to type 'ToolCheckResult' with 'exactOptionalPropertyTypes: true'.`
+- **Context:** Interface dengan `version?: string` tidak kompatibel saat return value `string | undefined`
+- **Workaround:** Ubah interface ke `version?: string | undefined`
+- **Pattern ID:** P-001
+
+---
+
+### F-008 | write_to_file | 2025-12-25
+
+- **Command/Params:** src/commands/create.ts - validate function in p.text
+- **Error:** `Not all code paths return a value.`
+- **Context:** validate function yang menggunakan early return tanpa explicit return di akhir
+- **Workaround:** Tambahkan `return undefined;` di akhir function body
+- **Pattern ID:** P-004
+
+---
+
+### F-009 | write_to_file | 2025-12-25
+
+- **Command/Params:** src/ui/prompts.ts - textInput optional params
+- **Error:** `Argument of type '{ placeholder: string | undefined; ... }' is not assignable to parameter of type 'TextOptions' with 'exactOptionalPropertyTypes: true'.`
+- **Context:** Passing optional params langsung ke library function
+- **Workaround:** Build object secara dinamis, hanya assign property jika value !== undefined
+- **Pattern ID:** P-001
+
+---
+
 ## 🔍 Identified Patterns
 
 ### P-001: exactOptionalPropertyTypes TypeScript Error
@@ -80,12 +120,37 @@ Log kegagalan tool/command untuk pembelajaran Agent.
 
 ---
 
+### P-004: Implicit Void Return in Conditional Functions
+
+- **Description:** Function yang menggunakan early return dengan kondisi if-else tanpa explicit return di akhir akan dianggap tidak mengembalikan value di semua path.
+- **Root Cause:** TypeScript strict mode memerlukan explicit return di semua code paths
+- **Solution:**
+  1. Selalu tambahkan `return undefined;` di akhir function yang butuh return value
+  2. Untuk validate functions: pattern `if (error) return 'error msg'; return undefined;`
+- **Affected Files:** Semua function dengan conditional returns
+- **Created:** 2025-12-25
+
+---
+
 ### P-002: Double Shebang Error
 
 - **Description:** Jika source file (`.ts`) memiliki shebang DAN tsup config juga menambahkan shebang via `banner`, hasil build akan memiliki double shebang yang menyebabkan parse error.
 - **Root Cause:** tsup `banner.js` option menambahkan shebang, source file juga sudah punya shebang
 - **Solution:** Hapus shebang dari source file, biarkan bundler yang menambahkan shebang
 - **Affected Files:** Entry point CLI (`src/index.ts`)
+- **Created:** 2025-12-25
+
+---
+
+### P-003: Duplicate Object Property Name
+
+- **Description:** Object literal tidak boleh memiliki property dengan nama yang sama. Saat membuat object dengan banyak properties, pastikan setiap nama unik.
+- **Root Cause:** Copy-paste atau lupa bahwa nama sudah dipakai di bagian lain object
+- **Solution:**
+  1. Gunakan nama deskriptif yang spesifik (e.g., `crossBox` vs `cross`)
+  2. Kelompokkan properties berdasarkan kategori dan review sebelum finalize
+  3. Jika ada semantic overlap, tambahkan suffix (e.g., `Icon`, `Box`, `Char`)
+- **Affected Files:** Object literal dengan banyak properties
 - **Created:** 2025-12-25
 
 ---
