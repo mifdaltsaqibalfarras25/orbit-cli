@@ -22,5 +22,6 @@
 | PLAN_006 | Frontend: Design System Components | ✅ Done |
 | PLAN_007 | Frontend: Prompt Flows             | ✅ Done |
 | PLAN_008 | Frontend: Error Message System     | ✅ Done |
+| PLAN_009 | Backend: Domain Entities           | ✅ Done |
 
-**Ringkasan:** 🏗️ 0 Active | 📋 0 Backlog | 📦 8 Arsip
+**Ringkasan:** 🏗️ 0 Active | 📋 0 Backlog | 📦 9 Arsip

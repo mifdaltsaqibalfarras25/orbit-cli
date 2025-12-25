@@ -8,7 +8,7 @@ Log kegagalan tool/command untuk pembelajaran Agent.
 
 | Tool          | Total Failures | Last Failure |
 | ------------- | -------------- | ------------ |
-| run_command   | 1              | 2025-12-25   |
+| run_command   | 2              | 2025-12-25   |
 | write_to_file | 8              | 2025-12-25   |
 
 ---
@@ -105,6 +105,16 @@ Log kegagalan tool/command untuk pembelajaran Agent.
 
 ---
 
+### F-010 | run_command | 2025-12-25
+
+- **Command/Params:** git commit -m "... TOPIC_003 (Frontend Design) COMPLETE!"
+- **Error:** Shell menunggu closing quote karena parentheses `()` di dalam double quotes menyebabkan shell parsing issue
+- **Context:** Commit message dengan parentheses dan tanda seru
+- **Workaround:** Hindari `()` dan `!` dalam commit message, atau gunakan single quotes
+- **Pattern ID:** P-005
+
+---
+
 ## 🔍 Identified Patterns
 
 ### P-001: exactOptionalPropertyTypes TypeScript Error
@@ -151,6 +161,19 @@ Log kegagalan tool/command untuk pembelajaran Agent.
   2. Kelompokkan properties berdasarkan kategori dan review sebelum finalize
   3. Jika ada semantic overlap, tambahkan suffix (e.g., `Icon`, `Box`, `Char`)
 - **Affected Files:** Object literal dengan banyak properties
+- **Created:** 2025-12-25
+
+---
+
+### P-005: Shell Quoting Issue in Commit Messages
+
+- **Description:** Karakter khusus seperti `()` dan `!` dalam commit message dapat menyebabkan shell parsing issue, terutama saat menggunakan double quotes.
+- **Root Cause:** Shell (zsh/bash) menginterpretasi karakter khusus dalam double quotes
+- **Solution:**
+  1. Hindari `()` dan `!` dalam commit messages
+  2. Gunakan format deskriptif tanpa karakter khusus: "TOPIC_003 Frontend Design COMPLETE"
+  3. Atau gunakan single quotes untuk literal strings
+- **Affected Files:** Semua git commit commands
 - **Created:** 2025-12-25
 
 ---
