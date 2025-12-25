@@ -4,7 +4,8 @@
 
 ## 📚 Research Entries
 
-| File | Judul | Tanggal |
-| :--- | :---- | :------ |
+| File                                                                 | Judul                                           | Tanggal    |
+| :------------------------------------------------------------------- | :---------------------------------------------- | :--------- |
+| [RESEARCH_001_cli_architecture.md](RESEARCH_001_cli_architecture.md) | Architecture Breakdown: Universal CLI Generator | 2024-12-24 |
 
-**Statistik:** 0 Entries
+**Statistik:** 1 Entry
