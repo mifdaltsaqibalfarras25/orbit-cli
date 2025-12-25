@@ -10,10 +10,11 @@
 | [TOPIC_004](TOPIC_004_backend_architecture/_main.md) | Backend Architecture            | 📂 Expanded | 💬 Aktif | 🔴 Tinggi |
 | [TOPIC_005](TOPIC_005_project_setup/_main.md)        | Project Setup                   | 📂 Expanded | 💬 Aktif | 🔴 Tinggi |
 | [TOPIC_006](TOPIC_006_devsecops/_main.md)            | DevSecOps & Production          | 📂 Expanded | 💬 Aktif | 🔴 Tinggi |
+| [TOPIC_007](TOPIC_007_security_bug_audit/_main.md)   | Security & Bug Audit            | 📂 Expanded | 💬 Aktif | 🔴 Tinggi |
 
 ## 📦 Arsip
 
 | ID  | Judul | Status |
 | :-- | :---- | :----- |
 
-**Ringkasan:** 💬 6 Aktif | 📦 0 Arsip
+**Ringkasan:** 💬 7 Aktif | 📦 0 Arsip

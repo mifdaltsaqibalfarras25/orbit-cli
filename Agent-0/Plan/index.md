@@ -7,8 +7,9 @@
 
 ## 📋 Backlog
 
-| ID  | Judul | Prioritas | Status |
-| :-- | :---- | :-------- | :----- |
+| ID       | Judul                               | Prioritas | Status     |
+| :------- | :---------------------------------- | :-------- | :--------- |
+| PLAN_016 | Bug Fix: Create Command Placeholder | 🔴 Tinggi | 📋 Backlog |
 
 ## 📦 Arsip
 
@@ -28,5 +29,7 @@
 | PLAN_012 | Backend: DI Container              | ✅ Done |
 | PLAN_013 | Backend: Validation and Security   | ✅ Done |
 | PLAN_014 | Backend: Flow Integration          | ✅ Done |
+| PLAN_015 | Security Fixes                     | ✅ Done |
+| PLAN_016 | Bug Fix: Create Command            | ✅ Done |
 
-**Ringkasan:** 🏗️ 0 Active | 📋 0 Backlog | 📦 14 Arsip
+**Ringkasan:** 🏗️ 0 Active | 📋 0 Backlog | 📦 16 Arsip

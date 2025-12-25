@@ -6,10 +6,12 @@ Log kegagalan tool/command untuk pembelajaran Agent.
 
 ## 📊 Statistik
 
-| Tool          | Total Failures | Last Failure |
-| ------------- | -------------- | ------------ |
-| run_command   | 2              | 2025-12-25   |
-| write_to_file | 9              | 2025-12-25   |
+| Tool            | Total Failures | Last Failure |
+| --------------- | -------------- | ------------ |
+| run_command     | 2              | 2025-12-25   |
+| write_to_file   | 9              | 2025-12-25   |
+| Code Generation | 4              | 2025-12-25   |
+| Config          | 1              | 2025-12-25   |
 
 ---
 
@@ -125,6 +127,57 @@ Log kegagalan tool/command untuk pembelajaran Agent.
 
 ---
 
+### F-012 | Code Generation | 2025-12-25
+
+- **Command/Params:** src/commands/create.ts - p.tasks() with placeholder TODOs
+- **Error:** `await setTimeout(500); // Simulated delay` - Placeholder code shipped instead of real implementation
+- **Context:** PLAN_016 - Commands layer had fake progress with simulated delays, while real implementation was in flows layer but NOT CONNECTED to entry point
+- **Workaround:** Replace placeholder with actual flow calls: `import { runCreateFlow } from '../flows/create-flow.js'`
+- **Pattern ID:** P-007
+- **Severity:** 🔴 CRITICAL - Core functionality broken
+
+---
+
+### F-013 | Code Generation | 2025-12-25
+
+- **Command/Params:** src/core/validation/schemas.ts, validate.ts
+- **Error:** Empty files (0 bytes) left in codebase
+- **Context:** Zod installed as dependency but these placeholder files were never implemented. Validation was done in utils/validation.ts instead
+- **Workaround:** Delete empty files or implement Zod schemas. Deleted folder entirely.
+- **Pattern ID:** P-008
+
+---
+
+### F-014 | Code Generation | 2025-12-25
+
+- **Command/Params:** src/commands/doctor.ts - function signature
+- **Error:** `@typescript-eslint/require-await: Async function 'runDoctor' has no 'await' expression`
+- **Context:** Function declared as `async` but doesn't use await - spinner operations are synchronous
+- **Workaround:** Remove `async` keyword: `export function runDoctor(): void`
+- **Pattern ID:** P-009
+
+---
+
+### F-015 | Code Generation | 2025-12-25
+
+- **Command/Params:** src/commands/helpers/check-tools.ts - regex usage
+- **Error:** `@typescript-eslint/prefer-regexp-exec: Use the RegExp#exec() method instead`
+- **Context:** Using `string.match(regex)` instead of `regex.exec(string)`
+- **Workaround:** Change from `output.match(/v?(\d+\.\d+\.\d+)/)` to `const regex = /v?(\d+\.\d+\.\d+)/; regex.exec(output)`
+- **Pattern ID:** P-010
+
+---
+
+### F-016 | Config | 2025-12-25
+
+- **Command/Params:** tsconfig.json - exclude array
+- **Error:** ESLint could not find test files in project: `The file was not found in any of the provided project(s)`
+- **Context:** `"exclude": ["**/*.test.ts"]` prevented ESLint from parsing test files
+- **Workaround:** Remove `**/*.test.ts` from exclude array
+- **Pattern ID:** P-011
+
+---
+
 ## 🔍 Identified Patterns
 
 ### P-001: exactOptionalPropertyTypes TypeScript Error
@@ -197,6 +250,84 @@ Log kegagalan tool/command untuk pembelajaran Agent.
   2. Gunakan `displayError()` hanya untuk `OrbitError` instances
   3. Type guard: `if (error instanceof OrbitBaseError) displayError(error)`
 - **Affected Files:** Flow files yang catch generic errors
+- **Created:** 2025-12-25
+
+---
+
+### P-007: Placeholder Code Left in Production (CRITICAL)
+
+- **Description:** Placeholder code dengan `// TODO` comments dan simulated delays (`await setTimeout()`) dikirim ke production alih-alih implementasi nyata.
+- **Root Cause:**
+  1. AI membuat placeholder di satu layer (commands) tapi implementasi nyata di layer lain (flows)
+  2. Entry point tidak dihubungkan dengan implementasi yang benar
+  3. Tidak ada verification bahwa code actually works
+- **Solution:**
+  1. **SELALU** verify end-to-end bahwa entry point terhubung ke implementasi nyata
+  2. **NEVER** leave `await setTimeout()` atau simulated delays di production code
+  3. **ALWAYS** test core functionality manually sebelum consider "complete"
+  4. Jika membuat placeholder, HARUS ada tracking mechanism untuk replacement
+- **Prevention:** Run full integration test, not just build/typecheck
+- **Created:** 2025-12-25
+
+---
+
+### P-008: Empty Placeholder Files Not Cleaned Up
+
+- **Description:** File kosong dibuat sebagai placeholder untuk future implementation tapi tidak pernah di-implement atau di-delete.
+- **Root Cause:**
+  1. Folder structure dibuat di awal project dengan template files
+  2. Requirements berubah dan file tidak dibutuhkan lagi
+  3. Tidak ada audit untuk unused/empty files
+- **Solution:**
+  1. Jangan buat file kosong - buat saat ready untuk implement
+  2. Jika ada unused dependencies (e.g., zod), evaluate apakah perlu di-remove
+  3. Regular codebase audit untuk dead code
+- **Created:** 2025-12-25
+
+---
+
+### P-009: Async Function Without Await
+
+- **Description:** Function dideklarasikan sebagai `async` tapi tidak menggunakan `await` di dalamnya.
+- **Root Cause:**
+  1. Function awalnya async kemudian logic berubah
+  2. Anticipated async operations yang tidak terjadi
+  3. Copy-paste dari async function lain
+- **Solution:**
+  1. Jika tidak ada await, remove `async` keyword
+  2. Jika return void, gunakan `function foo(): void` bukan `async function foo(): Promise<void>`
+  3. ESLint rule `@typescript-eslint/require-await` menangkap ini
+- **Created:** 2025-12-25
+
+---
+
+### P-010: String.match() vs RegExp.exec()
+
+- **Description:** ESLint prefer `regex.exec(string)` daripada `string.match(regex)` untuk consistency dan performance.
+- **Root Cause:** Developer habit - `.match()` lebih familiar
+- **Solution:**
+
+  ```typescript
+  // Instead of:
+  const match = output.match(/pattern/);
+
+  // Use:
+  const regex = /pattern/;
+  const match = regex.exec(output);
+  ```
+
+- **Created:** 2025-12-25
+
+---
+
+### P-011: Test Files Excluded from TypeScript Project
+
+- **Description:** tsconfig.json exclude array berisi `**/*.test.ts`, menyebabkan ESLint gagal parse test files.
+- **Root Cause:** Mencegah test files dari build output tapi over-broad exclude
+- **Solution:**
+  1. Hapus `**/*.test.ts` dari exclude
+  2. tsup/bundler biasanya sudah handle exclude test files dari bundle
+  3. Atau buat separate tsconfig.test.json untuk tests
 - **Created:** 2025-12-25
 
 ---
