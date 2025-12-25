@@ -26,5 +26,6 @@
 | PLAN_010 | Backend: Core Services             | ✅ Done |
 | PLAN_011 | Backend: Use Cases                 | ✅ Done |
 | PLAN_012 | Backend: DI Container              | ✅ Done |
+| PLAN_013 | Backend: Validation and Security   | ✅ Done |
 
-**Ringkasan:** 🏗️ 0 Active | 📋 0 Backlog | 📦 12 Arsip
+**Ringkasan:** 🏗️ 0 Active | 📋 0 Backlog | 📦 13 Arsip
