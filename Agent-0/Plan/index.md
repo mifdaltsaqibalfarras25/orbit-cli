@@ -12,7 +12,12 @@
 
 ## 📦 Arsip
 
-| ID  | Judul | Status |
-| :-- | :---- | :----- |
+| ID       | Judul                            | Status  |
+| :------- | :------------------------------- | :------ |
+| PLAN_001 | Project Setup: Installation      | ✅ Done |
+| PLAN_002 | Project Setup: Folder Structure  | ✅ Done |
+| PLAN_003 | Project Setup: Configurations    | ✅ Done |
+| PLAN_004 | Project Setup: Initial Files     | ✅ Done |
+| PLAN_005 | Project Setup: Framework Configs | ✅ Done |
 
-**Ringkasan:** 🏗️ 0 Active | 📋 0 Backlog | 📦 0 Arsip
+**Ringkasan:** 🏗️ 0 Active | 📋 0 Backlog | 📦 5 Arsip

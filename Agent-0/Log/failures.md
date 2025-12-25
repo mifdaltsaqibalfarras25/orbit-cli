@@ -8,49 +8,103 @@ Log kegagalan tool/command untuk pembelajaran Agent.
 
 | Tool          | Total Failures | Last Failure |
 | ------------- | -------------- | ------------ |
-| run_command   | 0              | -            |
-| write_to_file | 0              | -            |
+| run_command   | 1              | 2025-12-25   |
+| write_to_file | 4              | 2025-12-25   |
 
 ---
 
 ## 📝 Log Entries
 
-<!-- Entries akan ditambahkan saat terjadi kegagalan -->
+### F-001 | write_to_file | 2025-12-25
+
+- **Command/Params:** src/ui/gradients.ts - Export gradient variables
+- **Error:** `Exported variable 'gradients' has or is using name 'GradientFunction' from external module but cannot be named.`
+- **Context:** Creating UI gradients dengan `gradient-string` library
+- **Workaround:** Definisikan explicit type alias `type GradientFn = { (text: string): string; multiline: (text: string) => string }` dan gunakan `Record<string, GradientFn>` untuk export object
+- **Pattern ID:** P-001
+
+---
+
+### F-002 | write_to_file | 2025-12-25
+
+- **Command/Params:** src/ui/prompts.ts - selectOption function
+- **Error:** `Type '{ value: T; label: string; hint?: string | undefined; }[]' is not assignable to type 'Option<T>[]' with 'exactOptionalPropertyTypes: true'.`
+- **Context:** Wrapping @clack/prompts select function
+- **Workaround:** Gunakan `as any` cast dengan eslint-disable comment: `options: options as any`
+- **Pattern ID:** P-001
+
+---
+
+### F-003 | run_command | 2025-12-25
+
+- **Command/Params:** npm run build - tsup bundle with DTS
+- **Error:** `Error parsing dist/index.js - Expected ident (double shebang)`
+- **Context:** Shebang di source file + shebang di tsup banner = double shebang
+- **Workaround:** Hapus shebang dari source file (`src/index.ts`), biarkan tsup yang menambahkan via `banner: { js: '#!/usr/bin/env node' }`
+- **Pattern ID:** P-002
+
+---
+
+### F-004 | write_to_file | 2025-12-25
+
+- **Command/Params:** src/core/services/command-builder.ts - BuildResult interface
+- **Error:** `Type '{ postInstall: ... | undefined }' is not assignable to type 'BuildResult' with 'exactOptionalPropertyTypes: true'.`
+- **Context:** Optional property dengan conditional value
+- **Workaround:** Tambahkan `| undefined` pada interface: `postInstall?: { ... }[] | undefined`
+- **Pattern ID:** P-001
+
+---
+
+### F-005 | write_to_file | 2025-12-25
+
+- **Command/Params:** src/core/services/tool-detector.ts - version property
+- **Error:** `Type 'string | undefined' is not assignable to type 'string' with exactOptionalPropertyTypes.`
+- **Context:** Interface property dengan optional value
+- **Workaround:** Ubah interface dari `version?: string` menjadi `version: string | undefined`
+- **Pattern ID:** P-001
 
 ---
 
 ## 🔍 Identified Patterns
 
-<!-- Pattern yang teridentifikasi dari ≥3 failure serupa -->
+### P-001: exactOptionalPropertyTypes TypeScript Error
+
+- **Description:** Dengan `exactOptionalPropertyTypes: true` di tsconfig, TypeScript sangat ketat tentang optional properties. `prop?: T` tidak sama dengan `prop?: T | undefined`.
+- **Root Cause:** tsconfig.json menggunakan strict mode dengan `exactOptionalPropertyTypes: true`
+- **Solution:**
+  1. Untuk interface: gunakan `prop?: T | undefined` bukan `prop?: T`
+  2. Untuk external library types yang tidak kompatibel: gunakan `as any` cast dengan eslint-disable
+  3. Untuk export variable dari external module: definisikan explicit type alias
+- **Affected Files:** Semua file yang menggunakan optional properties atau external library types
+- **Created:** 2025-12-25
+
+---
+
+### P-002: Double Shebang Error
+
+- **Description:** Jika source file (`.ts`) memiliki shebang DAN tsup config juga menambahkan shebang via `banner`, hasil build akan memiliki double shebang yang menyebabkan parse error.
+- **Root Cause:** tsup `banner.js` option menambahkan shebang, source file juga sudah punya shebang
+- **Solution:** Hapus shebang dari source file, biarkan bundler yang menambahkan shebang
+- **Affected Files:** Entry point CLI (`src/index.ts`)
+- **Created:** 2025-12-25
 
 ---
 
 ## 🧪 Test Cases
 
-> Test cases untuk validasi ulang pattern yang sudah teridentifikasi.
-> Dijalankan saat `/self_audit` jika pattern berusia >7 hari.
+### TC-001 (Pattern: P-001)
 
-<!-- Format:
-### TC-{NNN} (Pattern: P-{NNN})
-- **Command:** {command to test}
-- **Setup:** {langkah persiapan}
-- **Expected Result:** {hasil yang diharapkan jika pattern masih berlaku}
-- **Cleanup:** {langkah pembersihan}
-- **Created:** {YYYY-MM-DD}
-- **Last Tested:** {YYYY-MM-DD atau -}
--->
+- **Command:** `npm run typecheck`
+- **Setup:** Buat interface dengan `prop?: string` dan assign `undefined`
+- **Expected Result:** Type error jika pattern masih berlaku
+- **Cleanup:** Revert file
+- **Created:** 2025-12-25
+- **Last Tested:** -
 
 ---
 
 ## 📦 Archived Patterns
 
 > Pattern yang sudah tidak berlaku lagi (obsolete).
-
-<!-- Format:
-### P-{NNN}: {Nama Pattern} [ARCHIVED]
-- **Original Status:** {status sebelum archive}
-- **Archived Date:** {tanggal archive}
-- **Reason:** {alasan archive}
--->
 
 _Belum ada pattern yang diarsipkan._
