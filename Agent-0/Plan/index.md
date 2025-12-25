@@ -25,5 +25,6 @@
 | PLAN_009 | Backend: Domain Entities           | ✅ Done |
 | PLAN_010 | Backend: Core Services             | ✅ Done |
 | PLAN_011 | Backend: Use Cases                 | ✅ Done |
+| PLAN_012 | Backend: DI Container              | ✅ Done |
 
-**Ringkasan:** 🏗️ 0 Active | 📋 0 Backlog | 📦 11 Arsip
+**Ringkasan:** 🏗️ 0 Active | 📋 0 Backlog | 📦 12 Arsip
