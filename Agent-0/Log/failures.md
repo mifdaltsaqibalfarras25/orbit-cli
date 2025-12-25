@@ -9,7 +9,7 @@ Log kegagalan tool/command untuk pembelajaran Agent.
 | Tool          | Total Failures | Last Failure |
 | ------------- | -------------- | ------------ |
 | run_command   | 2              | 2025-12-25   |
-| write_to_file | 8              | 2025-12-25   |
+| write_to_file | 9              | 2025-12-25   |
 
 ---
 
@@ -115,6 +115,16 @@ Log kegagalan tool/command untuk pembelajaran Agent.
 
 ---
 
+### F-011 | write_to_file | 2025-12-25
+
+- **Command/Params:** src/flows/create-flow.ts - displayError call
+- **Error:** `Argument of type 'Error' is not assignable to parameter of type 'OrbitError'. Type 'Error' is missing the following properties from type 'OrbitError': code, title`
+- **Context:** Passing generic Error ke displayError yang expects OrbitError interface
+- **Workaround:** Gunakan p.log.error untuk generic errors, displayError hanya untuk OrbitError
+- **Pattern ID:** P-006
+
+---
+
 ## 🔍 Identified Patterns
 
 ### P-001: exactOptionalPropertyTypes TypeScript Error
@@ -174,6 +184,19 @@ Log kegagalan tool/command untuk pembelajaran Agent.
   2. Gunakan format deskriptif tanpa karakter khusus: "TOPIC_003 Frontend Design COMPLETE"
   3. Atau gunakan single quotes untuk literal strings
 - **Affected Files:** Semua git commit commands
+- **Created:** 2025-12-25
+
+---
+
+### P-006: Error vs OrbitError Type Mismatch
+
+- **Description:** `displayError()` expects `OrbitError` interface (dengan `code` dan `title`), bukan generic `Error`.
+- **Root Cause:** Catch block menangkap generic Error, tapi try menggunakan function yang expects specific error type
+- **Solution:**
+  1. Gunakan `p.log.error(error.message)` untuk generic errors
+  2. Gunakan `displayError()` hanya untuk `OrbitError` instances
+  3. Type guard: `if (error instanceof OrbitBaseError) displayError(error)`
+- **Affected Files:** Flow files yang catch generic errors
 - **Created:** 2025-12-25
 
 ---
